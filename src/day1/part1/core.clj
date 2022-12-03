@@ -1,4 +1,4 @@
-(ns aoc-2022.core
+(ns day1.part1.core
   (:gen-class)
   (:require [clojure.java.io :as io]
             [clojure.string :as str]))
@@ -16,4 +16,4 @@
         calorie-matrix-num (map int-vec calorie-matrix)
         added-up-calories (map add-up-vec calorie-matrix-num)
         max-calories (apply max added-up-calories)]
-    max-calories))
+    (println max-calories)))
