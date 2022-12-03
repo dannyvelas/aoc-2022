@@ -6,4 +6,5 @@
   :dependencies [[org.clojure/clojure "1.11.1"]]
   :main nil
   :target-path "target/%s"
-  :profiles {:day1-part1 {:main day1.part1.core}})
+  :profiles {:day1-part1 {:main day1.part1.core}
+             :day1-part2 {:main day1.part2.core}})
