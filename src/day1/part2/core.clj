@@ -10,25 +10,19 @@
   (map #(Integer/parseInt %) v))
 
 (defn remove-at [v i]
-  (concat (subvec v 0 i)
-          (subvec v (inc i))))
+  (into [] (concat (subvec v 0 i)
+                   (subvec v (inc i)))))
 
-(defn max-and-index
-  ([v] (max-and-index v 0 -1 -1))
-  ([v i curr-max curr-max-i]
-   (if (= i (count v))
-     [curr-max curr-max-i]
-     (let [e (get v i)]
-       (if (> e curr-max)
-         (max-and-index v (inc i) e i)
-         (max-and-index v (inc i) curr-max curr-max-i))))))
+(defn max-and-index [v]
+  (let [as-map (zipmap (range (count v)) v)]
+    (reverse (apply max-key val as-map))))
 
 (defn top-n [v n]
   (if (= n 0)
     []
     (let [[max-e max-e-index] (max-and-index v)
           vec-wout-max (remove-at v max-e-index)]
-      (concat [max-e] (top-n vec-wout-max (dec n))))))
+      (into [] (concat [max-e] (top-n vec-wout-max (dec n)))))))
 
 (defn -main [& _]
   (let [file-content (slurp (io/resource "calories.txt"))
