@@ -7,4 +7,5 @@
   :main nil
   :target-path "target/%s"
   :profiles {:day1-part1 {:main day1.part1.core}
-             :day1-part2 {:main day1.part2.core}})
+             :day1-part2 {:main day1.part2.core}
+             :day2-part1 {:main day2.part1.core}})
