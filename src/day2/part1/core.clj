@@ -21,7 +21,7 @@
 (defn get-res [they-play you-play]
   (cond
     (= they-play you-play) :draw
-    (= (get key-beats-val they-play) you-play) :lose
+    (= (key-beats-val they-play) you-play) :lose
     :else :win))
 
 (defn -main [& _]
