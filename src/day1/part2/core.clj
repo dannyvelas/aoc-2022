@@ -9,26 +9,31 @@
 (defn int-vec [v]
   (map #(Integer/parseInt %) v))
 
-(defn remove-at [v i]
-  (into [] (concat (subvec v 0 i)
-                   (subvec v (inc i)))))
-
-(defn max-and-index [v]
-  (let [as-map (zipmap (range (count v)) v)]
-    (reverse (apply max-key val as-map))))
-
-(defn top-n [v n]
+(defn top-n [tally-map n]
   (if (= n 0)
     []
-    (let [[max-e max-e-index] (max-and-index v)
-          vec-wout-max (remove-at v max-e-index)]
-      (into [] (concat [max-e] (top-n vec-wout-max (dec n)))))))
+    (let [[-max-key freq] (apply max-key key tally-map)
+          new-map (if (= freq 1)
+                    (dissoc tally-map -max-key)
+                    (assoc tally-map -max-key (dec freq)))]
+      (into [] (concat [-max-key] (top-n new-map (dec n)))))))
+
+(defn tally
+  ([v] (tally v {} 0))
+  ([v as-map i]
+   (if (< i (count v))
+     (let [e (get v i)
+           v-in-map (get as-map e)
+           new-v (if (not= v-in-map nil) (inc v-in-map) 1)]
+       (tally v (assoc as-map e new-v) (inc i)))
+     as-map)))
 
 (defn -main [& _]
   (let [file-content (slurp (io/resource "calories.txt"))
         calorie-groups (str/split file-content #"\n\n")
-        calorie-matrix (map #(str/split % #"\n") calorie-groups)
-        calorie-matrix-num (map int-vec calorie-matrix)
-        added-up-calories (map add-up-vec calorie-matrix-num)
-        top-3 (top-n added-up-calories 3)]
-    (println top-3)))
+        calorie-matrix (mapv #(str/split % #"\n") calorie-groups)
+        calorie-matrix-num (mapv int-vec calorie-matrix)
+        calorie-sums (mapv add-up-vec calorie-matrix-num)
+        calorie-sums-map (tally calorie-sums)
+        top-3 (top-n calorie-sums-map 3)]
+    top-3))
