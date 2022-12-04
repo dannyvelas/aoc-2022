@@ -35,5 +35,6 @@
         calorie-matrix-num (mapv int-vec calorie-matrix)
         calorie-sums (mapv add-up-vec calorie-matrix-num)
         calorie-sums-map (tally calorie-sums)
-        top-3 (top-n calorie-sums-map 3)]
-    top-3))
+        top-3 (top-n calorie-sums-map 3)
+        top-3-sum (add-up-vec top-3)]
+    top-3-sum))
