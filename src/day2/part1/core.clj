@@ -25,7 +25,7 @@
     :else :win))
 
 (defn -main [& _]
-  (let [file-content (slurp (io/resource "rock-paper-scissors.txt"))
+  (let [file-content (slurp (io/resource "02-rock-paper-scissors.txt"))
         char-rounds (str/split file-content #"\n")
         char-rounds-matrix (mapv #(str/split % #" ") char-rounds)
         play-rounds-matrix (mapv #(mapv str-to-play %) char-rounds-matrix)

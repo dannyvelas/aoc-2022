@@ -21,7 +21,7 @@
     [(subvec coll 0 mid-indx) (subvec coll mid-indx len)]))
 
 (defn -main [& _]
-  (let [file-content (slurp (io/resource "rucksack.txt"))
+  (let [file-content (slurp (io/resource "03-rucksack.txt"))
         rsacks-str (str/split file-content #"\n")
         rsacks-chars (mapv #(vec (char-array %)) rsacks-str)
         rsacks-split (mapv vec-in-half rsacks-chars)

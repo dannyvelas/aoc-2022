@@ -10,7 +10,7 @@
   (map #(Integer/parseInt %) v))
 
 (defn -main [& _]
-  (let [file-content (slurp (io/resource "calories.txt"))
+  (let [file-content (slurp (io/resource "01-calories.txt"))
         calorie-groups (str/split file-content #"\n\n")
         calorie-matrix (map #(str/split % #"\n") calorie-groups)
         calorie-matrix-num (map int-vec calorie-matrix)

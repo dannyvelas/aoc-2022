@@ -31,7 +31,7 @@
   (+ (play-to-pts your-play) (res-to-pts result)))
 
 (defn -main [& _]
-  (let [file-content (slurp (io/resource "rock-paper-scissors.txt"))
+  (let [file-content (slurp (io/resource "02-rock-paper-scissors.txt"))
         str-rounds (str/split file-content #"\n")
         str-rounds (mapv #(str/split % #" ") str-rounds)
         rounds (mapv parse-str-round str-rounds)

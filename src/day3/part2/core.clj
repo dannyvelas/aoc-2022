@@ -29,7 +29,7 @@
     as-vec))
 
 (defn -main [& _]
-  (let [file-content (slurp (io/resource "rucksack.txt"))
+  (let [file-content (slurp (io/resource "03-rucksack.txt"))
         rsacks-str (str/split file-content #"\n")
         rsacks-chars (mapv #(vec (char-array %)) rsacks-str)
         rsacks-grps-of-3 (nest-vec rsacks-chars 3)
