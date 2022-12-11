@@ -1,4 +1,4 @@
-(ns day1.part2.core
+(ns day01.part2.core
   (:gen-class)
   (:require [clojure.java.io :as io]
             [clojure.string :as str]))

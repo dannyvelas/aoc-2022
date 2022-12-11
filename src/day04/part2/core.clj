@@ -1,4 +1,4 @@
-(ns day4.part1.core
+(ns day04.part2.core
   (:gen-class)
   (:require [clojure.java.io :as io]
             [clojure.string :as str]))
@@ -8,15 +8,15 @@
     {:start (Integer/parseInt start-str)
      :end (Integer/parseInt end-str)}))
 
-(defn range-fully-contains? [r1 r2]
-  (<= (r1 :start) (r2 :start) (r2 :end) (r1 :end)))
+(defn range-overlaps? [r1 r2]
+  (and (<= (r2 :start) (r1 :end))
+       (>= (r2 :end) (r1 :start))))
 
 (defn -main [& _]
   (let [file-content (slurp (io/resource "04-sections.txt"))
         pairs-str (str/split file-content #"\n")
         pairs-vec (mapv #(str/split % #",") pairs-str)
         pairs-map (mapv #(mapv str-range-to-map %) pairs-vec)
-        pairs-full-overlap (filter #(or (range-fully-contains? (% 0) (% 1))
-                                        (range-fully-contains? (% 1) (% 0))) pairs-map)
+        pairs-full-overlap (filter #(range-overlaps? (% 0) (% 1)) pairs-map)
         amt-full-overlaps (count pairs-full-overlap)]
     amt-full-overlaps))
