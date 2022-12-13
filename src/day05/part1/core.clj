@@ -47,15 +47,21 @@
 
 (defn push-all-layers [empty-stack-map layers]
   (loop [i 0 stack-map empty-stack-map]
-    (cond (< i (count layers)) (let [new-stack-map (push-one-layer stack-map (get layers i))]
-                                 (recur (inc i) new-stack-map))
+    (cond (< i (count layers))
+          (let [new-stack-map (push-one-layer stack-map (get layers i))]
+            (recur (inc i) new-stack-map))
           :else stack-map)))
+
+(defn stacks-section-to-map [stacks-section]
+  (let [amt-stacks (calc-amt-stacks stacks-section)
+        empty-stack-map (into {} (for [i (range amt-stacks)] [i '()]))
+        layers (stacks-section-to-vec-of-maps stacks-section)
+        filled-stack-map (push-all-layers empty-stack-map layers)
+        stack-map-correct-order (map-vals reverse filled-stack-map)]
+    stack-map-correct-order))
 
 (defn -main [& _]
   (let [file-content (slurp (io/resource "05-crates.txt"))
         [stacks-section instructions-section] (str/split file-content #"\n\n")
-        amt-stacks (calc-amt-stacks stacks-section)
-        empty-stack-map (into {} (for [i (range amt-stacks)] [i '()]))
-        layers (stacks-section-to-vec-of-maps stacks-section)
-        filled-stack-map (push-all-layers empty-stack-map layers)]
-    filled-stack-map))
+        stack-map (stacks-section-to-map stacks-section)]
+    stack-map))
