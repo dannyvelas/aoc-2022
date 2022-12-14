@@ -9,11 +9,14 @@
 (defn map-vals [f m]
   (into {} (for [[k v] m] [k (f v)])))
 
-(defn vec-to-groups [v group-size]
-  (let [vec-w-i (map-indexed (fn [i e] {:i i :e e}) v)
-        groups-of-n (group-by #(quot (get % :i) group-size) vec-w-i)
-        remove-is (map-vals #(mapv (fn [m] (m :e)) %) groups-of-n)]
-    remove-is))
+(defn vec-to-groups [-vec group-size]
+  (reduce-kv (fn [agg k v]
+               (let [group-i (quot k group-size)]
+                 (if-let [group-so-far (get agg group-i)]
+                   (assoc agg group-i (conj group-so-far v))
+                   (assoc agg group-i [v]))))
+             {}
+             -vec))
 
 (defn push-one-layer [stack-map layer]
   (into {} (for [[i stack] stack-map]
