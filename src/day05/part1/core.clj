@@ -20,10 +20,9 @@
 
 (defn push-one-layer [stack-map layer]
   (into {} (for [[i stack] stack-map]
-             (let [stack-to-add (if-let [new-crate (get layer i)]
-                                  (conj stack new-crate)
-                                  stack)]
-               [i stack-to-add]))))
+             (if-let [new-crate (get layer i)]
+               [i (conj stack new-crate)]
+               [i  stack]))))
 
 (defn vec-diff [v1 v2]
   (let [v1-set (set v1)
