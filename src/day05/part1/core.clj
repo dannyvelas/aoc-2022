@@ -29,7 +29,7 @@
         v2-set (set v2)]
     (vec (set/difference v1-set v2-set))))
 
-(defn line-to-indexed-crate-map [line]
+(defn line-to-layer [line]
   (let [as-char-vec (vec (char-array line))
         separated-stacks (vec-to-groups as-char-vec crate-str-len)
         alpha-chars-only (map-vals #(vec-diff % [\[ \space \]]) separated-stacks)
@@ -37,10 +37,10 @@
         vals-as-chars (map-vals first nonempty-vecs-only)]
     vals-as-chars))
 
-(defn stacks-section-to-vec-of-maps [stacks-section]
+(defn stacks-section-to-layer-vec [stacks-section]
   (let  [split-by-nl (str/split stacks-section #"\n")
-         no-col-names (subvec split-by-nl 0 (dec (count split-by-nl)))
-         vec-of-maps (mapv line-to-indexed-crate-map no-col-names)]
+         rm-col-names (subvec split-by-nl 0 (dec (count split-by-nl)))
+         vec-of-maps (mapv line-to-layer rm-col-names)]
     vec-of-maps))
 
 (defn calc-amt-stacks [stacks-section]
@@ -54,16 +54,49 @@
             (recur (inc i) new-stack-map))
           :else stack-map)))
 
-(defn stacks-section-to-map [stacks-section]
+(defn init-map-of-stacks [stacks-section]
   (let [amt-stacks (calc-amt-stacks stacks-section)
         empty-stack-map (into {} (for [i (range amt-stacks)] [i '()]))
-        layers (stacks-section-to-vec-of-maps stacks-section)
+        layers (stacks-section-to-layer-vec stacks-section)
         filled-stack-map (push-all-layers empty-stack-map layers)
         stack-map-correct-order (map-vals reverse filled-stack-map)]
     stack-map-correct-order))
 
+(defn init-cmd-vec [cmd-section]
+  (let [split-by-nl (str/split cmd-section #"\n")
+        split-by-sp (mapv #(str/split % #" ") split-by-nl)
+        only-nums (mapv (fn [v] {:amt (v 1) :from (v 3) :to (v 5)}) split-by-sp)
+        parsed-nums (mapv (fn [m] (map-vals #(Integer/parseInt %) m)) only-nums)]
+    parsed-nums))
+
+(defn move [stack-map from-index to-index]
+  (let [from-stack (stack-map from-index)
+        to-stack (stack-map to-index)
+        crate-being-moved (peek from-stack)
+        new-from-stack (pop from-stack)
+        new-to-stack (conj to-stack crate-being-moved)
+        stack-map-new-from (assoc stack-map from-index new-from-stack)
+        stack-map-new-to (assoc stack-map-new-from to-index new-to-stack)]
+    stack-map-new-to))
+
+(defn exec-cmd [stack-map cmd]
+  (loop [i 0 stack-map stack-map]
+    (if (< i (cmd :amt))
+      (let [new-stack-map (move stack-map (cmd :from) (cmd :to))]
+        (recur (inc i) new-stack-map))
+      stack-map)))
+
+(defn exec-cmds [stack-map cmds]
+  (loop [i 0 stack-map stack-map]
+    (if (< i (count cmds))
+      (let [new-map (exec-cmd stack-map (cmds i))]
+        (recur (inc i) new-map))
+      stack-map)))
+
 (defn -main [& _]
   (let [file-content (slurp (io/resource "05-crates.txt"))
-        [stacks-section instructions-section] (str/split file-content #"\n\n")
-        stack-map (stacks-section-to-map stacks-section)]
-    stack-map))
+        [stacks-section cmd-section] (str/split file-content #"\n\n")
+        stack-map (init-map-of-stacks stacks-section)
+        cmds (init-cmd-vec cmd-section)
+        stack-map-result (exec-cmds stack-map cmds)]
+    stack-map-result))
