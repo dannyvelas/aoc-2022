@@ -101,6 +101,6 @@
         [stacks-section cmd-section] (str/split file-content #"\n\n")
         stack-vec (init-vec-of-stacks stacks-section)
         cmds (init-cmd-vec cmd-section)
-        stack-vec-result (exec-cmds stack-vec cmds)]
-        ;;top-crates (get-tops stack-vec-result)
-    stack-vec-result))
+        stack-vec-result (exec-cmds stack-vec cmds)
+        top-crates (mapv peek stack-vec-result)]
+    top-crates))
