@@ -102,5 +102,6 @@
         stack-vec (init-vec-of-stacks stacks-section)
         cmds (init-cmd-vec cmd-section)
         stack-vec-result (exec-cmds stack-vec cmds)
-        top-crates (mapv peek stack-vec-result)]
-    top-crates))
+        top-crates (mapv peek stack-vec-result)
+        concatted (apply str top-crates)]
+    concatted))
